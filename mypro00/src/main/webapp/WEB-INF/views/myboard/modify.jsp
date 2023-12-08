@@ -63,8 +63,10 @@
 	<button type="button" class="btn btn-primary mybtns" id="btnRemove" data-oper="remove">삭제</button>
 	<button type="button" class="btn btn-warning mybtns" id="btnList" data-oper="list">취소</button>
 	
-	<input type="hidden"  name="pageNum" value="${myBoardPagingDTO.pageNum }">
-	<input type="hidden"  name="rowAmountPerPage" value="${myBoardPagingDTO.rowAmountPerPage }">
+	<input type="hidden"  id="pageNum" name="pageNum" value="${myBoardPagingDTO.pageNum }">
+	<input type="hidden" id="rowAmountPerPage" name="rowAmountPerPage" value="${myBoardPagingDTO.rowAmountPerPage }">
+	<input type="hidden" id="scope" name="scope" value="${myBoardPagingDTO.scope}">
+	<input type="hidden" id="keyword" name="keyword" value="${myBoardPagingDTO.keyword}">
 	
 	</form>
 
@@ -119,15 +121,23 @@ $(".mybtns").on("click", function(){
 			
 			var pageNumInput = $("#pageNum").clone() ;
 			var rowAmountPerPageInput = $("input[name='rowAmountPerPage']").clone() ;
+			var scopeInput = $("#scope").clone() ;
+			var keywordInput = $("#keyword").clone() ;
 			
 			frmModify.empty() ;
 			
 			frmModify.append(pageNumInput) ;
 			frmModify.append(rowAmountPerPageInput) ;
+			frmModify.append(scopeInput) ;
+			frmModify.append(keywordInput) ;
+			
 			
 			frmModify.attr("action", "${contextPath}/myboard/list").attr("method", "get") ; 
 		}
-		
+	/*	
+	<input type="hidden" name="scope" value="${myBoardPagingDTO.scope}">
+	<input type="hidden" name="keyword" value="${myBoardPagingDTO.keyword}">
+	*/
 		frmModify.submit() ;
 	});
  

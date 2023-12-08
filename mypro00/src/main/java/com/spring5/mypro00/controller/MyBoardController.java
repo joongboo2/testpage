@@ -92,7 +92,7 @@ public class MyBoardController {
 	//특정 게시물 조회 페이지 , 수정 후 조회 페이지
 	@GetMapping("/detail")
 	public String showBoardDetail(Long bno, Model model, String result,
-			  @ModelAttribute("myboardPaging") MyBoardPagingDTO myboardPaging) {
+			  					  @ModelAttribute("myboardPaging") MyBoardPagingDTO myboardPaging) {
 
 		MyBoardVO myboard = null ;
 		
@@ -144,6 +144,9 @@ public class MyBoardController {
 		redirectAttr.addAttribute("bno", myboard.getBno()) ;
 		redirectAttr.addAttribute("pageNum", myboardPaging.getPageNum());
 		redirectAttr.addAttribute("rowAmountPerPage", myboardPaging.getRowAmountPerPage()) ;
+		redirectAttr.addAttribute("scope", myboardPaging.getScope()) ;
+		redirectAttr.addAttribute("keyword", myboardPaging.getKeyword());
+		
 		return "redirect:/myboard/detail" ;
 	}
 	
@@ -156,7 +159,8 @@ public class MyBoardController {
 		
 		//boolean removeResult = myBoardService.removeBoard(bno);
 		
-		if(myBoardService.removeBoard(bno)) {
+		if(myBoardService.modifyBdelFlag(bno)) {
+		//if(myBoardService.removeBoard(bno)) {
 			redirectAttr.addFlashAttribute("result", "successRemove");
 		
 		} else {
@@ -165,6 +169,8 @@ public class MyBoardController {
 		
 		redirectAttr.addAttribute("pageNum", myboardPaging.getPageNum()) ;
 		redirectAttr.addAttribute("rowAmountPerPage", myboardPaging.getRowAmountPerPage()) ;
+		redirectAttr.addAttribute("scope", myboardPaging.getScope()) ;
+		redirectAttr.addAttribute("keyword", myboardPaging.getKeyword());
 		
 		return "redirect:/myboard/list";
 	}

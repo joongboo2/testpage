@@ -16,7 +16,7 @@
 	</select> -->
 	
 	
-<!-- 게시물 목록조회(READ): 페이징 고려 -->
+<!-- 게시물 목록조회(READ): 페이징 고려 --><!-- 
 	<select id="selectMyBoardList" resultType="com.spring5.mypro00.domain.MyBoardVO">
 		<![CDATA[
 			SELECT bno, btitle, bcontent, bwriter, bregdate, bmodDate, bviewsCnt, breplyCnt, bdelFlag
@@ -26,11 +26,194 @@
 			      )
 			WHERE rn > = ((#{pageNum} * #{rowAmountPerPage}) - (#{rowAmountPerPage} - 1 ))
 		]]>
-	</select>	
+	</select> -->	
 	
-<!-- 게시물 총 개수 조회(페이징): 삭제 요청된 행 포함 -->
+	
+<!-- 게시물 총 개수 조회(페이징) --><!-- 
 	<select id="selectRowTotal" resultType="long">
 	SELECT count(*) rowtotal FROM book_ex.tbl_myboard
+	</select> -->
+	
+<!-- 검색 페이징 방법1-->
+
+<!-- 게시물 목록조회(READ): 검색 페이징 고려 --><!-- 
+	<select id="selectMyBoardList" resultType="com.spring5.mypro00.domain.MyBoardVO"
+			parameterType="com.spring5.mypro00.common.paging.domain.MyBoardPagingDTO">
+		<![CDATA[
+			SELECT bno, btitle, bcontent, bwriter, bregdate, bmodDate, bviewsCnt, breplyCnt, bdelFlag
+			FROM ( SELECT /*+ INDEX_DESC (a pk_myboard) */ ROWNUM rn, a.* 
+			       FROM book_ex.tbl_myboard a
+	     ]]>
+			  	   <where>
+			  	   <![CDATA[
+				   		ROWNUM <= (#{pageNum} * #{rowAmountPerPage})
+				   ]]>
+				   	<if test="(scope != null or scope != '') and (keyword != null or keyword != '')">
+			       	<choose>
+			       		<when test="scope == 'T'.toString()">
+							AND (btitle LIKE '%' || #{keyword} || '%')     		
+			       		</when>
+			       		<when test="scope == 'C'.toString()">
+							AND (bcontent LIKE '%' || #{keyword} || '%')       		
+			       		</when>
+			       		<when test="scope == 'W'.toString()">
+							AND (bwriter LIKE '%' || #{keyword} || '%')       		
+			       		</when>
+			       		<when test="scope == 'TC'.toString()">
+							AND (btitle LIKE '%' || #{keyword} || '%' OR bcontent LIKE '%' || #{keyword} || '%')      		
+			       		</when>
+			       		<when test="scope == 'TCW'.toString()">
+							AND (btitle LIKE '%' || #{keyword} || '%' OR bcontent LIKE '%' || #{keyword} || '%' OR bwriter LIKE '%' || #{keyword} || '%')    		
+			       		</when>
+			       	</choose>
+			       	 </if>
+			       </where>
+		<![CDATA[	       
+			      )
+			WHERE rn > = ((#{pageNum} * #{rowAmountPerPage}) - (#{rowAmountPerPage} - 1 ))
+		]]>
+	</select>	 -->
+	
+	
+<!-- 게시물 총 개수 조회(페이징) --><!-- 
+	<select id="selectRowTotal" resultType="long"
+			parameterType="com.spring5.mypro00.common.paging.domain.MyBoardPagingDTO">
+	SELECT count(*) rowtotal FROM book_ex.tbl_myboard
+	<where>
+	<if test="(scope != null or scope != '') and (keyword != null or keyword != '')">
+       	<choose>
+       		<when test="scope == 'T'.toString()">
+				 (btitle LIKE '%' || #{keyword} || '%')     		
+       		</when>
+       		<when test="scope == 'C'.toString()">
+				 (bcontent LIKE '%' || #{keyword} || '%')       		
+       		</when>
+       		<when test="scope == 'W'.toString()">
+				 (bwriter LIKE '%' || #{keyword} || '%')       		
+       		</when>
+       		<when test="scope == 'TC'.toString()">
+				 (btitle LIKE '%' || #{keyword} || '%' OR bcontent LIKE '%' || #{keyword} || '%')      		
+       		</when>
+       		<when test="scope == 'TCW'.toString()">
+				 (btitle LIKE '%' || #{keyword} || '%' OR bcontent LIKE '%' || #{keyword} || '%' OR bwriter LIKE '%' || #{keyword} || '%')    		
+       		</when>
+       	 </choose>
+       	 </if>
+       	 </where>
+	</select> -->
+	
+	
+<!-- 검색 페이징 방법2-->
+<!-- 게시물 목록조회(READ): 페이징 고려 --><!-- 
+	<select id="selectMyBoardList" resultType="com.spring5.mypro00.domain.MyBoardVO"
+			parameterType="com.spring5.mypro00.common.paging.domain.MyBoardPagingDTO">
+		<![CDATA[
+			SELECT bno, btitle, bcontent, bwriter, bregdate, bmodDate, bviewsCnt, breplyCnt, bdelFlag
+			FROM ( SELECT /*+ INDEX_DESC (a pk_myboard) */ ROWNUM rn, a.* 
+			       FROM book_ex.tbl_myboard a
+			       WHERE 
+		]]>
+		
+		<trim prefix="(" suffix=") AND" prefixOverrides="OR">
+		   <foreach item='scope' collection="scopeArray">
+		      <trim prefix="OR">
+		         <choose>
+		            <when test="scope == 'T'.toString()">btitle LIKE '%'||#{keyword}||'%'</when>
+		            <when test="scope == 'C'.toString()">bcontent LIKE '%'||#{keyword}||'%'</when>
+		            <when test="scope == 'W'.toString()">bwriter LIKE '%'||#{keyword}||'%'</when>
+		         </choose>
+		      </trim> 
+		   </foreach>
+		</trim>    
+		
+		<![CDATA[      			       
+			       ROWNUM <= (#{pageNum} * #{rowAmountPerPage})
+			      )
+			WHERE rn > = ((#{pageNum} * #{rowAmountPerPage}) - (#{rowAmountPerPage} - 1 ))
+		]]>
+	</select> -->
+	
+	
+<!-- 게시물 총 개수 조회(페이징): 삭제 요청된 행 포함 --><!--  
+	<select id="selectRowTotal" resultType="long"
+			parameterType="com.spring5.mypro00.common.paging.domain.MyBoardPagingDTO">
+		SELECT count(*) rowtotal FROM book_ex.tbl_myboard
+		<where>
+         <trim prefix="(" suffix=")" prefixOverrides="OR">
+            <foreach item='scope' collection="scopeArray">
+               <trim prefix="OR">
+                  <choose>
+                     <when test="scope == 'T'.toString()">btitle LIKE '%'||#{keyword}||'%'</when>
+                     <when test="scope == 'C'.toString()">bcontent LIKE '%'||#{keyword}||'%'</when>
+                     <when test="scope == 'W'.toString()">bwriter LIKE '%'||#{keyword}||'%'</when>
+                  </choose>
+               </trim> 
+            </foreach>
+         </trim>
+(OR btitle LIKE '%'||#{keyword}||'%' OR bcontent LIKE '%'||#{keyword}||'%' OR bwriter LIKE '%'||#{keyword}||'%') AND  
+      (btitle LIKE '%제목6')
+             
+      </where>
+	</select> -->
+	
+<!-- 검색 페이징 방법3-->
+<!-- 게시물 목록조회(READ): 페이징 고려 -->
+	<select id="selectMyBoardList" resultType="com.spring5.mypro00.domain.MyBoardVO"
+			parameterType="com.spring5.mypro00.common.paging.domain.MyBoardPagingDTO">
+		<![CDATA[
+			SELECT bno, btitle, bcontent, bwriter, bregdate, bmodDate, bviewsCnt, breplyCnt, bdelFlag
+			FROM ( SELECT /*+ INDEX_DESC (a pk_myboard) */ ROWNUM rn, a.* 
+			       FROM book_ex.tbl_myboard a
+			       WHERE 
+		]]>
+		
+		<trim prefix="(" suffix=") AND" prefixOverrides="OR">
+		   <foreach item='scope' collection="scopeArray">
+		      <trim prefix="OR">
+		         <choose>
+		            <when test="scope == 'T'.toString()">btitle LIKE '%'||#{keyword}||'%'</when>
+		            <when test="scope == 'C'.toString()">bcontent LIKE '%'||#{keyword}||'%'</when>
+		            <when test="scope == 'W'.toString()">bwriter LIKE '%'||#{keyword}||'%'</when>
+		         </choose>
+		      </trim> 
+		   </foreach>
+		</trim>    
+		
+		<![CDATA[      			       
+			       ROWNUM <= (#{pageNum} * #{rowAmountPerPage})
+			      )
+			WHERE rn > = ((#{pageNum} * #{rowAmountPerPage}) - (#{rowAmountPerPage} - 1 ))
+		]]>
+	</select>
+	
+<!-- 	SELECT bno, btitle, bcontent, bwriter, bregdate, bmoddate, bviewsCnt, breplyCnt, bdelflag
+FROM ( SELECT /*+ INDEX_DESC (a pk_myboard) */ROWNUM rn, a.*
+    FROM book_ex.tbl_myboard a
+    WHERE (bregdate BETWEEN TO_DATE('2023-12-01','YYYY-MM-DD') AND TO_DATE('2023-12-05', 'YYYY-MM-DD')) AND ROWNUM <= (1 * 10)
+    )
+    WHERE rn >= ((1 * 10) - (10 - 1)) ; -->
+	
+	
+<!-- 게시물 총 개수 조회(페이징): 삭제 요청된 행 포함 --> 
+	<select id="selectRowTotal" resultType="long"
+			parameterType="com.spring5.mypro00.common.paging.domain.MyBoardPagingDTO">
+		SELECT count(*) rowtotal FROM book_ex.tbl_myboard
+		<where>
+         <trim prefix="(" suffix=")" prefixOverrides="OR">
+            <foreach item='scope' collection="scopeArray">
+               <trim prefix="OR">
+                  <choose>
+                     <when test="scope == 'T'.toString()">btitle LIKE '%'||#{keyword}||'%'</when>
+                     <when test="scope == 'C'.toString()">bcontent LIKE '%'||#{keyword}||'%'</when>
+                     <when test="scope == 'W'.toString()">bwriter LIKE '%'||#{keyword}||'%'</when>
+                  </choose>
+               </trim> 
+            </foreach>
+         </trim>
+<!-- (OR btitle LIKE '%'||#{keyword}||'%' OR bcontent LIKE '%'||#{keyword}||'%' OR bwriter LIKE '%'||#{keyword}||'%') AND  
+      (btitle LIKE '%제목6')
+-->             
+      </where>
 	</select>
 	
 	
@@ -87,9 +270,14 @@
 		DELETE FROM book_ex.tbl_myboard
 		WHERE bno = #{bno}
 	</delete>
-
-
-
+	
+<!-- 게시물 삭제요청(bdelFlag를 1로 업데이트) -->
+	<update id="updateBdelFlag" parameterType="long">
+		UPDATE book_ex.tbl_myboard
+		SET bdelFlag = 1
+		WHERE bno = #{bno}
+	</update>
+	
 
 
 <!-- 	<select id="selectSysdate" resultType="java.util.Date">

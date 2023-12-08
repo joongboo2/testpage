@@ -1,5 +1,7 @@
 package com.spring5.mypro00.common.paging.domain;
 
+import java.util.Date;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -14,9 +16,12 @@ public class MyBoardPagingDTO {
 	private String scope; ////검색범위(scope - btitle: T, bcontent: C, bwriter: W)
 	private String keyword; //검색어
 	
+	private String beginDate;
+	
+	private String endDate;
+	
 	//마이바티스 Setter
-	public String[] getScopeArray() {
-		
+	public String[] getScopeArray() {		
 		return scope == null ? new String[] {} : scope.split("");
 		
 	}

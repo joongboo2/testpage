@@ -42,14 +42,14 @@
 	     </select>
 	     
 	     <select class="form-control" id="selectScope" name="scope">
-	     	<option value="" ${(pagingCreator.myboardPaging.scope == null) ? "selected" : "" }>선택</option>
+	     	<option value="" ${(pagingCreator.myboardPaging.scope == null) ? "selected" : "" }>범위선택</option>
 	     	<option value="T" ${(pagingCreator.myboardPaging.scope == "T") ? "selected" : "" }>제목</option>
 	     	<option value="C" ${(pagingCreator.myboardPaging.scope == "C") ? "selected" : "" }>내용</option>
 	     	<option value="W" ${(pagingCreator.myboardPaging.scope == "W") ? "selected" : "" }>작성자</option>
 	     	<option value="TC" ${(pagingCreator.myboardPaging.scope == "TC") ? "selected" : "" }>제목+내용</option>
 	     	<option value="TCW" ${(pagingCreator.myboardPaging.scope == "TCW") ? "selected" : "" }>제목+내용+작성자</option>
 	     </select>
-	     
+	    
 	  <div class="input-group"><!-- 검색어 입력 -->
          <input class="form-control" id="keyword" name="keyword" type="text" placeholder="검색어를 입력하세요"
                value='<c:out value="${pagingCreator.myboardPaging.keyword}" />' />
@@ -61,12 +61,24 @@
       </div>
       
       <div class="input-group"><!-- 검색 초기화 버튼 -->
-         <button id="btnReset" class="btn btn-info" type="button">Reset</button>
+         <button id="btnReset" class="btn btn-info" type="button">검색초기화</button>
       </div> 
 		
-		<input type="hidden" name="pageNum" value="${pagingCreator.myboardPaging.pageNum }">
-		<input type="hidden" name="rowAmountPerPage" value="${pagingCreator.myboardPaging.rowAmountPerPage }">
-		<input type="hidden" name="lastPageNum" value="${pagingCreator.lastPageNum}">
+		<input type="hidden" id="pageNum" name="pageNum" value="${pagingCreator.myboardPaging.pageNum }"><%-- 
+		<input type="hidden" id="rowAmountPerPage" name="rowAmountPerPage" value="${pagingCreator.myboardPaging.rowAmountPerPage }"> --%>
+		<input type="hidden" id="lastPageNum" name="lastPageNum" value="${pagingCreator.lastPageNum}">
+	<br>	
+		
+	  <div class="input-group">
+	  	<input class="form-control" id="startdate" name="startdate" type="date">
+	  	<input class="form-control" id="enddate" name="enddate" type="date">
+	  	  <span class="input-group-btn"><!-- 날짜전송버튼 -->
+            <button class="btn btn-primary" type="button" id="btnSearchDate"
+            			>날짜검색 &nbsp;<i class="fa fa-search"></i>
+            </button>
+	  	</span>
+	  </div>	
+		
 	</div>
 </form>     
                 
@@ -88,16 +100,25 @@
 <c:choose>
 <c:when test="${not empty pagingCreator.myboardList }">
 	<c:forEach var="myboard" items="${pagingCreator.myboardList}">
-	
-		<tr class="moveDetail" data-bno="${myboard.bno }">
-			<td><c:out value="${myboard.bno }"/></td><%-- 
-			<td style="text-align: left"><a href="${contextPath }/myboard/detail?bno=${myboard.bno}" ><c:out value="${myboard.btitle }"/></a></td> --%>
-			<td style="text-align: left"><c:out value="${myboard.btitle }"/></td>
-			<td>${myboard.bwriter }</td>
-			<td class="center"><fmt:formatDate value="${myboard.bregDate }" pattern="yyyy/MM/dd HH:mm:ss"/></td>
-			<td class="center"><fmt:formatDate value="${myboard.bmodDate }" pattern="yyyy/MM/dd HH:mm:ss"/></td>
-			<td class="center"><c:out value="${myboard.bviewsCnt }"/></td>
-		 </tr>
+		<c:choose>
+			<c:when test="${myboard.bdelFlag == 1 }">
+				<tr style="background-color: Moccasin; text-align: center">
+             		<td>${myboard.bno }</td>
+             		<td colspan="6"><em>작성자에 의해서 삭제된 게시글입니다.</em></td>
+         		</tr>
+			</c:when>
+			<c:otherwise>
+				<tr class="moveDetail" data-bno="${myboard.bno }">
+					<td><c:out value="${myboard.bno }"/></td><%-- 
+					<td style="text-align: left"><a href="${contextPath }/myboard/detail?bno=${myboard.bno}" ><c:out value="${myboard.btitle }"/></a></td> --%>
+					<td style="text-align: left"><c:out value="${myboard.btitle }"/></td>
+					<td>${myboard.bwriter }</td>
+					<td class="center"><fmt:formatDate value="${myboard.bregDate }" pattern="yyyy/MM/dd HH:mm:ss"/></td>
+					<td class="center"><fmt:formatDate value="${myboard.bmodDate }" pattern="yyyy/MM/dd HH:mm:ss"/></td>
+					<td class="center"><c:out value="${myboard.bviewsCnt }"/></td>
+		 		</tr>
+			</c:otherwise>		
+		</c:choose>			
 	</c:forEach>
 </c:when>
 <c:otherwise>
@@ -189,7 +210,7 @@
         
 <script>
 
-var frmSendValue = $("#frmSendValue") ;
+var frmSendValue = $("#frmSendValue") ;       
 var result = '<c:out value="${result}" />' ; 
 //alert("length(result): " + result.length);
 
@@ -202,6 +223,7 @@ $("#btnToRegister").on("click",function(){
 //	self.location = "${contextPath}/myboard/register" ;	
 });
 
+//상세페이지 이동
 $(".moveDetail").on("click", function() {
 	var bno = $(this).data("bno") ;
 	
@@ -213,7 +235,7 @@ $(".moveDetail").on("click", function() {
 
 });
 
-
+//모달
 function runModal(result) {
 	
 	if (result.length == 0 ){
@@ -247,20 +269,57 @@ $(".pagination-button a").on("click", function(e){
 	
 });
 
-//표시 행수 선택 이벤트 처리
+<%--검색 관련 요소의 이벤트 처리--%>
+<%-- 표시 행수 선택 이벤트 처리 --%>
 $("#selectAmount").on("change", function() {
 	frmSendValue.find("input[name='pageNum']").val(1);
 	frmSendValue.submit();
 });
 
-/*
- <select class="form-control" id="selectAmount" name="rowAmountPerPage">
-    <option value="10" ${(pagingCreator.myboardPaging.rowAmountPerPage == 10) ? "selected" : "" }>10개</option>
-    <option value="50" ${(pagingCreator.myboardPaging.rowAmountPerPage == 50) ? "selected" : "" }>50개</option>
-    <option value="100" ${(pagingCreator.myboardPaging.rowAmountPerPage == 100) ? "selected" : "" }>100개</option>
- </select> 
+<%--검색버튼 클릭 이벤트 처리 --%>
+$("#btnSearchGo").on("click", function() {
+	
+	var scope = $("#selectScope").find("option:selected").val();
+	
+	if(!scope || scope == '' ){
+		alert("검색범위를 선택해주세요.");
+		return false;
+	}
+	
+	var keyword = $("#keyword").val() ;
+	
+	if(!keyword || keyword.length == 0){
+		alert("검색어를 입력해주세요.");
+		return ;		
+	}
+	
+	frmSendValue.find("input[name='pageNum']").val(1);
+	frmSendValue.submit();
+});
 
- */
+<%--검색초기화 버튼 이벤트처리, 버튼 초기화 시, 1페이지에 목록 정보 다시 표시 --%>
+$("#btnReset").on("click", function() {
+	$("#selectAmount").val(10);
+	$("#selectScope").val("");
+	$("#keyword").val("");
+	$("#pageNum").val(1);
+	
+	frmSendValue.submit();
+});
+
+$("#selectScope").on("change", function() {
+	$("#pageNum").val(1);
+	frmSendValue.submit();
+	//frmSendValue.find("input[name='pageNum']").val(1);
+});
+
+
+<%-- 날짜 검색 --%>
+$("#btnSearchDate").on("click", function() {
+	var startdate = $("#startdate").val();
+	var enddate = $("#enddate").val();
+	
+});
 
 
 

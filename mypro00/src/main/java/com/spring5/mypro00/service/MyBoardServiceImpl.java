@@ -60,9 +60,25 @@ public class MyBoardServiceImpl implements MyBoardService {
 //		return pagingCreator;
 		//return myBoardMapper.selectMyBoardList() ;
 		
-		return new MyBoardPagingCreatorDTO(myBoardMapper.selectRowTotal(), 
+		/*
+		 * String beginDate = myboardPaging.getBeginDate(); String endDate =
+		 * myboardPaging.getEndDate(); //2023-12-05
+		 * 
+		 * if (beginDate.equals(endDate)) { //endDate의 날수에(예, 05) +1 해서 //2023-12-06으로
+		 * 변경 //만약 beginDate와 endDate가 2023-12-31일인 경우 //+1을 한 endDate는 2024-01-01
+		 * myboardPaging.setEndDate(endDate);
+		 * 
+		 * }
+		 * 
+		 * myboardPaging.setEndDate(endDate);
+		 */
+		
+		return new MyBoardPagingCreatorDTO(myBoardMapper.selectRowTotal(myboardPaging), 
 										   myboardPaging, 
 										   myBoardMapper.selectMyBoardList(myboardPaging)) ;
+		
+
+		
 	}
 	
 	//게시물 등록
@@ -137,6 +153,16 @@ public class MyBoardServiceImpl implements MyBoardService {
 	public boolean removeBoard(long bno) {
 
 		int rows = myBoardMapper.deleteMyBoard(bno);
+		
+		//return (rows == 1) ? true : false;
+		return (rows == 1) ;
+	}
+	
+	//특정 게시물 삭제요청
+	@Override
+	public boolean modifyBdelFlag(long bno) {
+
+		int rows = myBoardMapper.updateBdelFlag(bno);
 		
 		//return (rows == 1) ? true : false;
 		return (rows == 1) ;

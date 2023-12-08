@@ -57,12 +57,12 @@
     <version>2.16.0</version>
 </dependency>
 
-<!-- 새로 추가: jackson-dataformat-xml (자바 객체 -> xml 으로 변환) --><!--   
+<!-- 새로 추가: jackson-dataformat-xml (자바 객체 -> xml 으로 변환) -->  
 <dependency>
     <groupId>com.fasterxml.jackson.dataformat</groupId>
     <artifactId>jackson-dataformat-xml</artifactId>
     <version>2.16.0</version>
-</dependency> -->
+</dependency>
 
 <!-- 새로 추가: json --> 
 <dependency>

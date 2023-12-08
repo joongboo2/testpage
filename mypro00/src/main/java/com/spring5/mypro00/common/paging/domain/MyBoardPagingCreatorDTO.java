@@ -1,5 +1,6 @@
 package com.spring5.mypro00.common.paging.domain;
 
+import java.sql.Date;
 import java.util.List;
 
 import com.spring5.mypro00.domain.MyBoardVO;
@@ -22,6 +23,9 @@ public class MyBoardPagingCreatorDTO {
 	private int pagingNumCnt ; //기본 10
 	private int lastPageNum ;
 	private List<MyBoardVO> myboardList ;
+	
+	private Date startdate;
+	private Date enddate;
 	
 	public MyBoardPagingCreatorDTO(long rowTotal, 
 								   MyBoardPagingDTO myboardPaging,

@@ -13,7 +13,7 @@ public interface MyBoardMapper {
 	//public List<MyBoardVO> selectMyBoardList(MyBoardPegingDTO myboardPaging);
 	
 	//게시물 총수(READ)
-	public long selectRowTotal();
+	public long selectRowTotal(MyBoardPagingDTO myboardPaging);
 	
 	//특정 새 게시물 등록(CREATE)
 	public int insertMyBoard(MyBoardVO myBoard);
@@ -26,6 +26,9 @@ public interface MyBoardMapper {
 	
 	//게시물 삭제(DELETE)
 	public int deleteMyBoard(long bno);
+	
+	//특정 게시물 삭제요청(UPDATE)
+	public int updateBdelFlag(long bno);
 	
 	//게시물 조회수 증가(+1씩 증가)
 	public int updateBviewCnt(long bno);

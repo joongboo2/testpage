@@ -20,7 +20,7 @@ import lombok.extern.log4j.Log4j;
 //테스트 메소드를 실행하는 어노테이션
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration  //DispatcherServlet의 구성설정파일을 사용하여 컨트롤러를 테스트하기 위해 필요한 설정 
-@ContextConfiguration({"file:src/main/webapp/WEB-INF/spring/mybatis-context.xml",
+@ContextConfiguration({"file:src/main/webapp/WEB-INF/spring/mybatis-contextDEV.xml",
                        "file:src/main/webapp/WEB-INF/spring/appServlet/servlet-context.xml" })
 @Log4j
 public class MyReplyControllerTests {
@@ -41,21 +41,21 @@ public class MyReplyControllerTests {
     //테스트 환경 구성-끝
 
 //    //게시물에 대한 댓글 목록 조회 테스트: GET /replies/pages/{bno}/{page}
-//    @Test
-//    public void testShowReplyList() throws Exception {
-//
-//        int resultStatus = 
-//            mockMvc.perform(get("/replies/229376/page/1")
-//                             //서버가 보낸 것이 JSON 일 때만 처리(컨트롤러의 produces 에 대응)
-//                            .accept("application/json; charset=UTF-8")
-//                             //서버로 보내는 데이터에 대한 인코딩을 UTF-8로 지정
-//                            .characterEncoding("utf-8"))
-//                    .andDo(print())// 콘솔 출력
-//                    .andReturn()
-//                    .getResponse()
-//                    .getStatus();
-//        log.info("웹브라우저에 전달되는 ResponseEntiry 객체의 처리 상태 코드(resultStatus): " + resultStatus );
-//    }
+    @Test
+    public void testShowReplyList() throws Exception {
+
+        int resultStatus = 
+            mockMvc.perform(get("/replies/229421/page/1")
+                             //서버가 보낸 것이 JSON 일 때만 처리(컨트롤러의 produces 에 대응)
+                            .accept("application/json; charset=UTF-8")
+                             //서버로 보내는 데이터에 대한 인코딩을 UTF-8로 지정
+                            .characterEncoding("utf-8"))
+                    .andDo(print())// 콘솔 출력
+                    .andReturn()
+                    .getResponse()
+                    .getStatus();
+        log.info("웹브라우저에 전달되는 ResponseEntiry 객체의 처리 상태 코드(resultStatus): " + resultStatus );
+    }
 //
 //    //게시물에 대한 댓글 등록(rno 반환):POST /replies/{bno}/new  (브라우저에서 JSON으로 보내는 것처럼 테스트 코드 작성)
 //    @Test
@@ -65,7 +65,7 @@ public class MyReplyControllerTests {
 //        MyReplyVO myReply = new MyReplyVO();
 //        
 //        //myReplyVO에 입력값 지정
-//        myReply.setBno(229404L);
+//        myReply.setBno(229421L);
 //        myReply.setRcontent("컨트롤러-게시물에 대한 댓글 등록 테스트: JSON입력테스트");
 //        myReply.setRwriter("testJson");
 //        
@@ -77,7 +77,7 @@ public class MyReplyControllerTests {
 //        
 //        //ResponseEntiry가 반환하는 상태값을 표시
 //        int resultStatus
-//                = mockMvc.perform(post("/replies/229404/new")
+//                = mockMvc.perform(post("/replies/229421/new")
 //                                    //서버가 보낸 것이 String 일 때만 처리(컨트롤러의 @*Mapping의 produces 속성에 대응)
 //                                   .accept("text/plain; charset=UTF-8")
 //                                    //서버에게 보낼 것이 JSON 임을 header에 명시(컨트롤러의 @*Mapping의 consumes 속성에 대응)
@@ -101,10 +101,10 @@ public class MyReplyControllerTests {
 //        MyReplyVO myReply = new MyReplyVO();
 //        
 //        //replyVO에 입력값 지정
-//        myReply.setBno(229404L);
+//        myReply.setBno(229423L);
 //        myReply.setRcontent("컨트롤러-댓글에 대한 답글 등록 테스트");
 //        myReply.setRwriter("test00");
-//        myReply.setPrno(61L);  //부모댓글의 rno를 받아와야 함
+//        myReply.setPrno(65L);  //부모댓글의 rno를 받아와야 함
 //        
 //        //myReply를  JSON 스트링으로 변환
 //        String myReplyJsonStr = new Gson().toJson(myReply);
@@ -114,7 +114,7 @@ public class MyReplyControllerTests {
 //        
 //        //ResponseEntiry가 반환하는 상태값을 표시
 //        int resultStatus
-//                = mockMvc.perform(post("/replies/229404/61/new")
+//                = mockMvc.perform(post("/replies/229423/65/new")
 //                                    //서버가 보낸 것이 String 일 때만 처리(컨트롤러의 @*Mapping의 produces 속성에 대응)
 //                                   .accept("text/plain; charset=UTF-8")
 //                                    //서버에게 보낼 것이 JSON 임을 header에 명시(컨트롤러의 @*Mapping의 consumes 속성에 대응)
@@ -134,7 +134,7 @@ public class MyReplyControllerTests {
 //    @Test
 //    public void testShowReply() throws Exception{
 //    	    int resultStatus =
-//                mockMvc.perform(get("/replies/229404/61")
+//                mockMvc.perform(get("/replies/229423/84")
 //                                  //서버가 보낸 것이 JSON 일 때만 처리(컨트롤러의 produces 에 대응)
 //                                 .accept("application/json; charset=UTF-8")
 //                                  //서버로 보내는 데이터에 대한 인코딩을 UTF-8로 지정
@@ -151,16 +151,18 @@ public class MyReplyControllerTests {
 //    public void testModifyReply() throws Exception{
 //
 //        MyReplyVO myReply = new MyReplyVO() ;
-//        myReply.setRno(61L);
+//        myReply.setRno(84L);
+//        myReply.setBno(229423L);
 //        myReply.setRcontent("댓글-컨트롤러-수정테스트 - 댓글 수정(put)");
+//        //myReply.setRcontent("댓글-컨트롤러-수정테스트 - 댓글 수정(put) - 댓글 수정(patch)222222");
 //        
 //        //myReply를 JSON 스트링으로 변환
 //        String myReplyJsonStr = new Gson().toJson(myReply);
 //        System.out.println("===========JSON-String 객체로 변환:" + myReplyJsonStr);
 //        
 //        int resultStatus =
-//                mockMvc.perform(put("/replies/229404/61")
-//                                  //mockMvc.perform(patch("/replies/458753/19")
+//                mockMvc.perform(put("/replies/229423/84")
+//                //mockMvc.perform(patch("/replies/458753/19")
 //                                  //서버가 보낸 것(컨트롤러의 @*Mapping의 produces 속성에 대응)
 //                                 .accept("text/plain; charset=UTF-8")
 //                                  //서버에게 보낼 것(컨트롤러의 @*Mapping의 consumes 속성에 대응)
@@ -172,18 +174,34 @@ public class MyReplyControllerTests {
 //                        .getStatus();
 //        log.info("웹브라우저에 전달되는 ResponseEntiry 객체의 처리 상태 코드(resultStatus): " + resultStatus);
 //    }
+    
 //    
-//    //게시물에 대한 특정 댓글 삭제 테스트: DELETE:  /replies/{bno}/{rno}
+//    //게시물에 대한 특정 댓글 삭제 테스트(rdelFlag를 1로 수정): DELETE:  /replies/{bno}/{rno}
 //    @Test
 //    public void testRemoveReply() throws Exception{
 //        int resultStatus =
-//                mockMvc.perform(delete("/replies/229404/61").accept("text/plain; charset=UTF-8"))
+//                mockMvc.perform(delete("/replies/229423/84")
+//                		        .accept("text/plain; charset=UTF-8"))
 //                       .andDo(print())
 //                       .andReturn()
 //                       .getResponse()
 //                       .getStatus();    	
 //    	log.info("웹브라우저에 전달되는 ResponseEntiry 객체의 처리 상태 코드(resultStatus): " + resultStatus );
 //    }
+    
+
+    //특정 게시물에 대한 모든 댓글 삭제 테스트 메서드 작성: 삭제 행수가 반환됨
+//    @Test
+//    public void testRemoveReply() throws Exception{
+//       int resultStatus =
+//             mockMvc.perform(delete("/replies/229421")
+//                         .accept("text/plain; charset=UTF-8"))
+//                   .andDo(print())
+//                   .andReturn()
+//                   .getResponse()
+//                   .getStatus();       
+//       log.info("resultStatus: " + resultStatus );
+//    } 
 
 
     

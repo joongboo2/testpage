@@ -27,6 +27,9 @@ public interface MyBoardService {
 	//특정 게시물 삭제(DELETE)
 	public boolean removeBoard(long bno);
 	
+	//특정 게시물 삭제요청
+	public boolean modifyBdelFlag(long bno);
+	
 
 	
 	
